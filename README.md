@@ -1,2 +1,2 @@
-# uni-project
-Assignment for the subject .NET technologies 
+# Uni-project
+Assignment for the subject .NET Technologies 
