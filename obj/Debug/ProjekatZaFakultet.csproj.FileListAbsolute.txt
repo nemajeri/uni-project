@@ -1,0 +1,14 @@
+C:\Users\pk\Desktop\Vjezbe\ProjekatZaFakultet\ProjekatZaFakultet\bin\Debug\ProjekatZaFakultet.exe.config
+C:\Users\pk\Desktop\Vjezbe\ProjekatZaFakultet\ProjekatZaFakultet\bin\Debug\ProjekatZaFakultet.exe
+C:\Users\pk\Desktop\Vjezbe\ProjekatZaFakultet\ProjekatZaFakultet\bin\Debug\ProjekatZaFakultet.pdb
+C:\Users\pk\Desktop\Vjezbe\ProjekatZaFakultet\ProjekatZaFakultet\obj\Debug\ProjekatZaFakultet.csproj.AssemblyReference.cache
+C:\Users\pk\Desktop\Vjezbe\ProjekatZaFakultet\ProjekatZaFakultet\obj\Debug\ProjekatZaFakultet.csproj.SuggestedBindingRedirects.cache
+C:\Users\pk\Desktop\Vjezbe\ProjekatZaFakultet\ProjekatZaFakultet\obj\Debug\ProjekatZaFakultet.Form1.resources
+C:\Users\pk\Desktop\Vjezbe\ProjekatZaFakultet\ProjekatZaFakultet\obj\Debug\ProjekatZaFakultet.Properties.Resources.resources
+C:\Users\pk\Desktop\Vjezbe\ProjekatZaFakultet\ProjekatZaFakultet\obj\Debug\ProjekatZaFakultet.csproj.GenerateResource.cache
+C:\Users\pk\Desktop\Vjezbe\ProjekatZaFakultet\ProjekatZaFakultet\obj\Debug\ProjekatZaFakultet.csproj.CoreCompileInputs.cache
+C:\Users\pk\Desktop\Vjezbe\ProjekatZaFakultet\ProjekatZaFakultet\obj\Debug\ProjekatZaFakultet.exe
+C:\Users\pk\Desktop\Vjezbe\ProjekatZaFakultet\ProjekatZaFakultet\obj\Debug\ProjekatZaFakultet.pdb
+C:\Users\pk\Desktop\Vjezbe\ProjekatZaFakultet\ProjekatZaFakultet\obj\Debug\ProjekatZaFakultet.Form2.resources
+C:\Users\pk\Desktop\Vjezbe\ProjekatZaFakultet\ProjekatZaFakultet\obj\Debug\ProjekatZaFakultet.Form3.resources
+C:\Users\pk\Desktop\Vjezbe\ProjekatZaFakultet\ProjekatZaFakultet\obj\Debug\ProjekatZaFakultet.Form4.resources
