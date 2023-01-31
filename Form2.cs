@@ -26,7 +26,7 @@ namespace ProjekatZaFakultet
 
         private void Button1_Click(object sender, EventArgs e)
         {
-            Form4 form4 = new Form4();
+            Form4 form4 = new Form4(username);
             form4.Show();
             this.Hide();
         }

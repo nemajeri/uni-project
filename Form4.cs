@@ -18,12 +18,26 @@ namespace ProjekatZaFakultet
 
         private string connectionString = "Data Source=NEMANJA;Initial Catalog=Imenik;Integrated Security=True";
 
-        public Form4()
+        private string username;
+
+        Chart chart;
+
+        public Form4(string username)
         {
             InitializeComponent();
             TextWriterTraceListener listener = new TextWriterTraceListener(@"C:\Users\pk\Desktop\logfile.txt");
             Trace.Listeners.Add(listener);
+            this.username = username;
             this.FormClosing += new FormClosingEventHandler(OnClosing);
+            CheckIfAdmin();
+
+            chart = new Chart();
+            chart.ChartAreas.Add("ChartArea1");
+            chart.Series.Add("Series1");
+            chart.Series["Series1"].ChartType = SeriesChartType.Pie;
+            chart.Location = new Point(15, 405);
+            chart.Size = new Size(230, 210);
+            this.Controls.Add(chart);
         }
 
         private void Form4_Load(object sender, EventArgs e)
@@ -75,27 +89,63 @@ namespace ProjekatZaFakultet
         private void AddButton_Click(object sender, EventArgs e)
         {
             string contactToAdd = addContactButton.Text;
-            string emailRegex = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$";
 
-            if (contactToAdd.Length > 0 && Regex.IsMatch(contactToAdd, emailRegex))
+            try
             {
-                emails.Add(contactToAdd);
+                if (!emails.Contains(contactToAdd) && Regex.IsMatch(contactToAdd, @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$"))
+                {
+                    emails.Add(contactToAdd);
+                    addContactButton.Text = null;
+                }
+                else if (contactToAdd.Length == 0 || emails.Contains(contactToAdd))
+                {
+                    MessageBox.Show("Please enter a valid contact", "Error", MessageBoxButtons.OK);
+                }
+                else
+                {
+                    MessageBox.Show("Inputed contact is not valid", "Error", MessageBoxButtons.OK);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Please enter the correct contact", "Error", MessageBoxButtons.OK);
+                Trace.TraceError(string.Format("{0} - Error in Method: {1} - Message: {2}",
+                DateTime.Now,
+                System.Reflection.MethodBase.GetCurrentMethod().Name,
+                ex.Message));
+            }
+            finally
+            {
+                listBoxForContacts.DataSource = null;
+                listBoxForContacts.DataSource = emails;
             }
         }
 
         private void DeleteButton_Click(object sender, EventArgs e)
         {
-            if (listBoxForContacts.SelectedItems != null)
+            try
             {
-                string selectedContact = (string)listBoxForContacts.SelectedItem;
+                if (listBoxForContacts.SelectedItems != null)
+                {
+                    string selectedContact = (string)listBoxForContacts.SelectedItem;
 
-                emails.Remove(selectedContact);
+                    emails.Remove(selectedContact);
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError(string.Format("{0} - Error in Method: {1} - Message: {2}",
+                DateTime.Now,
+                System.Reflection.MethodBase.GetCurrentMethod().Name,
+                ex.Message));
+            }
+            finally
+            {
+                listBoxForContacts.DataSource = null;
+                listBoxForContacts.DataSource = emails;
             }
         }
+
+
 
         private void UpdateButton_Click(object sender, EventArgs e)
         {
@@ -103,12 +153,7 @@ namespace ProjekatZaFakultet
 
             string updatedContact = updateContactField.Text;
 
-            if (!Regex.IsMatch(updatedContact, @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$"))
-            {
-                MessageBox.Show("Please enter a valid contact", "Error", MessageBoxButtons.OK);
-
-            }
-            else if (updatedContact.Equals(selectedContactForUpdating))
+            if (!Regex.IsMatch(updatedContact, @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$") || updatedContact.Equals(selectedContactForUpdating))
             {
                 MessageBox.Show("Please enter a valid contact", "Error", MessageBoxButtons.OK);
             }
@@ -166,20 +211,9 @@ namespace ProjekatZaFakultet
             Trace.Flush();
         }
 
-        private void OnClosing(object sender, FormClosingEventArgs e)
-        {
-            Trace.Listeners[0].Close();
-            base.OnClosing(e);
-        }
-
         private void GenerateStatsButton_Click(object sender, EventArgs e)
         {
-            Chart chart = new Chart();
-            chart.ChartAreas.Add("ChartArea1");
-            chart.Series.Add("Series1");
-            chart.Series["Series1"].ChartType = SeriesChartType.Pie;
-            chart.Location = new Point(15, 405);
-            chart.Size = new Size(230, 210);
+            chart.Series["Series1"].Points.Clear();
 
             Dictionary<string, int> domainCount = new Dictionary<string, int>();
             foreach (string email in emails)
@@ -199,8 +233,79 @@ namespace ProjekatZaFakultet
             {
                 chart.Series["Series1"].Points.AddXY(domain.Key, domain.Value);
             }
-            this.Controls.Add(chart);
         }
+
+        private void CheckIfAdmin()
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (SqlCommand command = new SqlCommand("SELECT PravaPristupa FROM Korisnici " +
+                "WHERE KorisnickoIme = @username", connection))
+            {
+                command.Parameters.AddWithValue("@username", username);
+
+
+                connection.Open();
+
+                SqlDataReader reader = command.ExecuteReader();
+
+                if (reader.HasRows)
+                {
+                    reader.Read();
+                    string rightsInDatabase = reader["PravaPristupa"].ToString();
+
+                    if (rightsInDatabase == "korisnik")
+                    {
+                        deleteButton.Visible = false;
+                    }
+                }
+                connection.Close();
+            }
+        }
+
+        private void OnClosing(object sender, FormClosingEventArgs e)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("DELETE FROM Kontakti", connection))
+                {
+                    try
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.TraceError(string.Format("{0} - Error in Method: {1} - Message: {2}",
+                        DateTime.Now,
+                        System.Reflection.MethodBase.GetCurrentMethod().Name,
+                        ex.Message));
+                    }
+                }
+
+                foreach (string email in emails)
+                {
+                    using (SqlCommand command = new SqlCommand("INSERT INTO Kontakti(Email) " +
+                    "VALUES(@email)", connection))
+                    {
+                        command.Parameters.AddWithValue("@email", email);
+                        try
+                        {
+                            command.ExecuteNonQuery();
+                        }
+                        catch (Exception ex)
+                        {
+                            Trace.TraceError(string.Format("{0} - Error in Method: {1} - Message: {2}",
+                            DateTime.Now,
+                            System.Reflection.MethodBase.GetCurrentMethod().Name,
+                            ex.Message));
+                        }
+                    }
+                }
+            }
+            Trace.Listeners[0].Close();
+            base.OnClosing(e);
+        }
+
     }
 }
 
